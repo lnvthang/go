@@ -26,7 +26,7 @@ func main() {
 		v1.GET("/user/:id", services.GetUserById)
 		v1.POST("/user", services.CreateUser)
 		v1.PUT("/user/:id", services.EditUserById)
-		v1.DELETE("/item/:id", services.DeleteItemById())
+		v1.DELETE("/user/:id", services.DeleteUserById)
 	}
 
 	r.Run(":8080")

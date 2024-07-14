@@ -108,6 +108,7 @@ func EditUserById(c *gin.Context) {
 	user.Status = req.Status
 	user.UpdatedBy = 1
 	user.UpdatedAt = time.Now()
+	user.DeletedAt = time.Now()
 
 	// Save the updated user record
 	result = database.DB.Save(&user)
@@ -119,8 +120,24 @@ func EditUserById(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func DeleteItemById() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"data": "Delete Item."})
+func DeleteUserById(c *gin.Context) {
+	// Retrieve user ID from URL parameter
+	userID := c.Param("id")
+
+	// Query the database to find the user by ID
+	var user models.User
+	result := database.DB.First(&user, userID)
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
 	}
+
+	// Delete the user record
+	result = database.DB.Delete(&user)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }
